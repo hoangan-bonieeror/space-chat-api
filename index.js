@@ -14,6 +14,13 @@ app.use(cors({
     origin : '*'
 }))
 
+app.get('/', (req,res) => {
+    return res.send(`
+        <h1 style="text-align : center; margin-top : 30vh">
+            Welcome to space chat application api
+        </h1>
+    `)
+})
 app.post('/login', authenticateUser)
 app.use('/user', userRoute)
 
