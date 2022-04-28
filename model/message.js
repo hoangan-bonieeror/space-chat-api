@@ -23,6 +23,6 @@ const Message = sequelize.define('tbl_messages', {
     }
 })
 
-Message.sync({alter : true})
+// Message.sync({alter : true})
 
 module.exports = Message

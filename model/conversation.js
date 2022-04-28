@@ -15,6 +15,6 @@ const Conversation = sequelize.define('tbl_conversations', {
     }
 })
 
-Conversation.sync({alter : true})
+// Conversation.sync({alter : true})
 
 module.exports = Conversation

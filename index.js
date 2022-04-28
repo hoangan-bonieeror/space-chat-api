@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const app = express();
 const { authenticateUser } = require('./controller/user.controller')
 const userRoute = require('./route/user.route')
+const conversationRoute = require('./route/conversation.route')
 
 
 // Use middleware 
@@ -23,5 +24,6 @@ app.get('/', (req,res) => {
 })
 app.post('/login', authenticateUser)
 app.use('/user', userRoute)
+app.use('/conversation', conversationRoute)
 
 app.listen(process.env.PORT || 3000, () => console.log(`Listening on port ${process.env.PORT || 3000}`))

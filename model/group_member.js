@@ -28,6 +28,6 @@ const Group_Member = sequelize.define('tbl_group_member', {
     }
 })
 
-Group_Member.sync({alter : true})
+// Group_Member.sync({alter : true})
 
 module.exports = Group_Member
