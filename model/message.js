@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../utils/db_connection')
 const Conversation = require('./conversation')
+const User = require('./user')
 
 const Message = sequelize.define('tbl_messages', {
     id : {
@@ -19,6 +20,13 @@ const Message = sequelize.define('tbl_messages', {
         references : {
             model : Conversation,
             key : 'conversation_id'
+        }
+    },
+    sender_id  : {
+        type : DataTypes.UUID,
+        references : {
+            model : User,
+            key : 'user_id'
         }
     }
 })

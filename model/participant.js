@@ -1,9 +1,14 @@
-const { DataTypes, DATE } = require('sequelize')
+const { DataTypes } = require('sequelize')
 const sequelize = require('../utils/db_connection')
 const User = require('./user')
 const Conversation = require('./conversation')
 
-const Group_Member = sequelize.define('tbl_group_member', {
+const Participants = sequelize.define('tbl_participants', {
+    id : {
+        type : DataTypes.INTEGER,
+        autoIncrement : true,
+        primaryKey : true
+    },
     joined_datetime : {
         type : DataTypes.DATE,
         defaultValue : Date.now()
@@ -28,6 +33,6 @@ const Group_Member = sequelize.define('tbl_group_member', {
     }
 })
 
-// Group_Member.sync({alter : true})
+// Participants.sync({alter : true})
 
-module.exports = Group_Member
+module.exports = Participants
