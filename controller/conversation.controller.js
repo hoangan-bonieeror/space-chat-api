@@ -2,18 +2,12 @@ const Conversation = require('../model/conversation')
 const Participants = require('../model/participant')
 const User = require('../model/user')
 const { Op } = require("sequelize");
+const catchInternalError = require('../utils/catchInternalError')
 
 const isUUID = (value) => {
     return value.match(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89AB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/i);
 }
-const catchInternalError = (res,error) => {
-    console.log(error)
-    return res.json({
-        code : 500,
-        status : 'Internal Error System',
-        msg : 'Something went wrong'
-    })
-}
+
 module.exports = {
     createConversation : async (req,res) => {
         try {

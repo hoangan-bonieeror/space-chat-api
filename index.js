@@ -9,6 +9,7 @@ const { authenticateUser } = require('./controller/user.controller')
 // const db_sync = require('./utils/sync_db')
 const userRoute = require('./route/user.route')
 const conversationRoute = require('./route/conversation.route')
+const messageRoute = require('./route/message.route')
 
 
 // const User = require('./model/user')
@@ -34,6 +35,7 @@ app.get('/', (req,res) => {
 app.post('/login', authenticateUser)
 app.use('/user', userRoute)
 app.use('/conversation', conversationRoute)
+app.use('/message', messageRoute)
 
 app.listen(process.env.PORT || 3000, async () => {
     // await db_sync(User, Participants, Message, Conversation)
