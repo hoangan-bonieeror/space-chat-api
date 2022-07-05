@@ -100,7 +100,8 @@ module.exports = {
             const userExistInRoom = await Participants.findOne({ where : {
                 [Op.and] : {
                     user_id : user_id,
-                    conversation_id : conversation_id
+                    conversation_id : conversation_id,
+                    left_datetime : null
                 }
             } })
             if(userExistInRoom !== null) {

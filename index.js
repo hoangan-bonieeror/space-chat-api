@@ -11,6 +11,8 @@ const userRoute = require('./route/user.route')
 const conversationRoute = require('./route/conversation.route')
 const messageRoute = require('./route/message.route')
 
+const errorHandler = require('./middlewares/errorHandler')
+
 
 // const User = require('./model/user')
 // const Participants = require('./model/participant')
@@ -24,7 +26,6 @@ app.use(cors({
     origin : '*'
 }))
 
-
 app.get('/', (req,res) => {
     return res.send(`
         <h1 style="text-align : center; margin-top : 30vh">
@@ -36,6 +37,11 @@ app.post('/login', authenticateUser)
 app.use('/user', userRoute)
 app.use('/conversation', conversationRoute)
 app.use('/message', messageRoute)
+
+app.all('/*', (req,res) => {
+    throw Error(`${req.ip} try to load the ${req.url}`)
+})
+app.use(errorHandler)
 
 app.listen(process.env.PORT || 3000, async () => {
     // await db_sync(User, Participants, Message, Conversation)
