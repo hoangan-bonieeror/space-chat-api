@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const path = require('path')
 
 
 const app = express();
@@ -11,7 +12,7 @@ const userRoute = require('./route/user.route')
 const conversationRoute = require('./route/conversation.route')
 const messageRoute = require('./route/message.route')
 
-const errorHandler = require('./middlewares/errorHandler')
+const {errorHandler, reqHandler} = require('./middlewares/logHandler')
 
 
 // const User = require('./model/user')
@@ -25,6 +26,8 @@ app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-
 app.use(cors({
     origin : '*'
 }))
+app.use('/404.html' ,express.static(path.join(__dirname, 'views')))
+app.use(reqHandler)
 
 app.get('/', (req,res) => {
     return res.send(`
@@ -33,6 +36,7 @@ app.get('/', (req,res) => {
         </h1>
     `)
 })
+
 app.post('/login', authenticateUser)
 app.use('/user', userRoute)
 app.use('/conversation', conversationRoute)

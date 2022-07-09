@@ -11,14 +11,20 @@ const logEvents = async (msg, logType) => {
     try {
         !fs.existsSync(path.join(__dirname, '..' ,'logs')) && await fsPromises.mkdir(path.join(__dirname, 'logs'))
 
-        await fsPromises.appendFile(path.join(__dirname, '..' ,'logs', logType), logString)
+        await fsPromises.appendFile(path.join(__dirname, '..' ,'logs', logType), '\n' + logString)
     } catch (error) {
         console.log(error)
     }
 }
 
-module.exports = (error, req, res, next) => {
-    logEvents(`${error.name} : ${error.message}`, 'errLog.txt')
-    console.error(error.stack);
-    res.status(500).send(error.message)
+module.exports = {
+    errorHandler : (error, req, res, next) => {
+        logEvents(`${error.name} : ${error.message}`, 'errLog.txt')
+        console.error(error.stack);
+        res.redirect(path.join(__dirname, '404.html'))
+    }, 
+    reqHandler : (req, res, next) => {
+        logEvents(`${req.ip} ${req.method} ${req.url}`, 'reqLog.txt')
+        next()
+    }
 }
