@@ -21,7 +21,7 @@ module.exports = {
     errorHandler : (error, req, res, next) => {
         logEvents(`${error.name} : ${error.message}`, 'errLog.txt')
         console.error(error.stack);
-        res.redirect(path.join(__dirname, '404.html'))
+        res.redirect('/404.html')
     }, 
     reqHandler : (req, res, next) => {
         logEvents(`${req.ip} ${req.method} ${req.url}`, 'reqLog.txt')

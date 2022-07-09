@@ -1,11 +1,15 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const path = require('path')
 
 
 const app = express();
-const { authenticateUser } = require('./controller/user.controller')
+const { authenticateUser } = require('./auth/authentication')
+const authorization = require('./middlewares/authorizeHandler')
+const handleRefreshToken = require('./auth/refreshTokenHandler')
+const handleLogout = require('./auth/logout')
 // const db_connection = require('./utils/db_connection')
 // const db_sync = require('./utils/sync_db')
 const userRoute = require('./route/user.route')
@@ -26,8 +30,9 @@ app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-
 app.use(cors({
     origin : '*'
 }))
-app.use('/404.html' ,express.static(path.join(__dirname, 'views')))
+app.use('/' ,express.static(path.join(__dirname, 'views')))
 app.use(reqHandler)
+app.use(cookieParser())
 
 app.get('/', (req,res) => {
     return res.send(`
@@ -37,10 +42,13 @@ app.get('/', (req,res) => {
     `)
 })
 
-app.post('/login', authenticateUser)
-app.use('/user', userRoute)
-app.use('/conversation', conversationRoute)
-app.use('/message', messageRoute)
+app.post('/auth', authenticateUser)
+app.use('/refresh', handleRefreshToken)
+app.use('/logout', handleLogout)
+
+app.use('/user', authorization,userRoute)
+app.use('/conversation', authorization,conversationRoute)
+app.use('/message', authorization,messageRoute)
 
 app.all('/*', (req,res) => {
     throw Error(`${req.ip} try to load the ${req.url}`)

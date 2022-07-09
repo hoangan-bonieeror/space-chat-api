@@ -51,6 +51,14 @@ const User = sequelize.define('tbl_users' , {
         type : DataTypes.TEXT,
         defaultValue : null,
         field : 'profile_bio'
+    },
+    refreshToken : {
+        type : DataTypes.STRING,
+        defaultValue : null,
+        field : 'refresh_token',
+        set(newRefreshToken) {
+            this.setDataValue('refreshToken', newRefreshToken)
+        }
     }
 })
 

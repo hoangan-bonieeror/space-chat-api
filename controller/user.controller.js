@@ -122,52 +122,6 @@ module.exports = {
             })
         }
     },
-    authenticateUser : async (req, res) => {
-        try {
-            const { username, password } = req.body
-
-            const userExist = await User.findOne({ where : { email : username } })
-
-            if(userExist === null) {
-                return res.json({
-                    code : 400,
-                    status : 'Bad Request',
-                    msg : 'Email is not existed'
-                })
-            } else {
-                if(bcrypt.compareSync(password, userExist.password)) {
-                    const token = jwt.sign({
-                        data : userExist.id
-                    }, process.env.SECRETKEY ,{ expiresIn: '3h' });
-
-                    let currentTime = Date.now()
-                    let expTime = currentTime + (60000 * 60 * 3)
-                    return res.json({
-                        code : 200,
-                        status : 'OK',
-                        data : {
-                            token : token,
-                            exp : new Date(expTime).toLocaleString(),
-                            time : new Date(currentTime).toLocaleString()
-                        }
-                    })
-                } else {
-                    return res.json({
-                        code : 400,
-                        status : 'Bad Request',
-                        msg : 'Wrong password'
-                    })
-                }
-            }
-        } catch (error) {
-            console.log(error)
-            return res.json({
-                code : 500,
-                status : 'Internal System Error',
-                msg : 'Something went wrong'
-            })
-        }
-    },
     getUserById : async (req, res) => {
         try {
             (await User.findByPk(req.params.user_id) === null)
