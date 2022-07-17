@@ -85,12 +85,7 @@ module.exports = {
                 })
             }
         } catch (error) {
-            console.log(error)
-            return res.json({
-                code : 500,
-                status : 'Internal System Error',
-                msg : 'Something went wrong'
-            })
+            catchInternalError(res,error)
         }
     },
     deleteUser : async (req, res) => {
@@ -114,12 +109,7 @@ module.exports = {
                 })
             }
         } catch (err) {
-            console.log(error)
-            return res.json({
-                code : 500,
-                status : 'Internal System Error',
-                msg : 'Something went wrong'
-            })
+            catchInternalError(res,error)
         }
     },
     getUserById : async (req, res) => {
@@ -137,12 +127,7 @@ module.exports = {
                 data : await User.findByPk(req.params.user_id)
             })
         } catch(error) {
-            console.log(error)
-            return res.json({
-                code : 500,
-                status : 'Internal System Error',
-                msg : 'Something went wrong'
-            })
+            catchInternalError(res,error)
         }
     },
     modifyUser : async (req,res) => {
@@ -191,12 +176,7 @@ module.exports = {
                 })
             }
         } catch (error) {
-            console.log(error)
-            return res.json({
-                code : 500,
-                status : 'Internal System Error',
-                msg : 'Something went wrong'
-            })
+            catchInternalError(res,error)
         }
     }
 }

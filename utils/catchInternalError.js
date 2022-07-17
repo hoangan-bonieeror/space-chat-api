@@ -1,6 +1,6 @@
-module.exports = (res,error) => {
+module.exports = (response,error) => {
     console.log(error)
-    return res.json({
+    return response.status(500).json({
         code : 500,
         status : 'Internal Error System',
         msg : 'Something went wrong'

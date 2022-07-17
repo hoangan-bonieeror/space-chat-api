@@ -67,12 +67,7 @@ module.exports = {
                 }
             })
         } catch (error) {
-            console.log(error)
-            return res.json({
-                code : 500,
-                status : 'Internal Error System',
-                msg : 'Something went wrong'
-            })
+            catchInternalError(res,error)
         }
     },
     addUserToConversationById : async (req,res) => {
@@ -126,12 +121,7 @@ module.exports = {
             })
             
         } catch(error) {
-            console.log(error)
-            return res.json({
-                code : 500,
-                status : 'Internal Error System',
-                msg : 'Something went wrong'
-            })
+            catchInternalError(res,error)
         }
     },
     leftConversationById : async (req,res) => {
@@ -180,12 +170,7 @@ module.exports = {
                 updatedParticipant : userExistInRoom
             })
         } catch(error) {
-            console.log(error)
-            return res.json({
-                code : 500,
-                status : 'Internal Error System',
-                msg : 'Something went wrong'
-            })
+            catchInternalError(res,error)
         }
     },
     getParticipantsById : async (req,res) => {
