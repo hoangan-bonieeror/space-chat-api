@@ -1,9 +1,9 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../utils/db_connection')
-const User = require('./user')
-const Conversation = require('./conversation')
+const Group = require('./group')
+const Account = require('./account')
 
-const Participants = sequelize.define('tbl_participants', {
+const GroupMembers = sequelize.define('tbl_group_members', {
     id : {
         type : DataTypes.INTEGER,
         autoIncrement : true,
@@ -17,22 +17,22 @@ const Participants = sequelize.define('tbl_participants', {
         type : DataTypes.DATE,
         defaultValue : null
     },
-    user_id : {
-        type : DataTypes.UUID,
+    account_id : {
+        type : DataTypes.STRING,
         references : {
-            model : User,
-            key : 'user_id'
+            model : Account,
+            key : 'account_id'
         }
     },
-    conversation_id : {
-        type : DataTypes.UUID,
+    group_id : {
+        type : DataTypes.INTEGER,
         references : {
-            model : Conversation,
-            key : 'conversation_id'
+            model : Group,
+            key : 'group_id'
         }
     }
 })
 
-// Participants.sync({alter : true})
+// GroupMembers.sync({force : true})
 
-module.exports = Participants
+module.exports = GroupMembers

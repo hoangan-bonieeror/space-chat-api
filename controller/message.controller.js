@@ -1,75 +1,73 @@
-const Message = require('../model/message')
-const User = require('../model/user')
-const Participants = require('../model/participant')
-const Conversation = require('../model/conversation')
+const { SUCCESS_RESPONSE } = require('../utils/response')
+const { sendMessage, getAllMessages } = require('../service/message.service')
+const { SEND_MESSAGE_TYPE, GET_MESSAGE_TYPE } = require('../const/const')
 const catchInternalError = require('../utils/catchInternalError')
-const { Op } = require('sequelize')
-
 module.exports = {
-    sendMessageToConversation : async (req,res) => {
+    sendMessageOneOnOne : async (req, res) => {
         try {
-            const { conversation_id, sender_id } = req.params
+            const sender_id = req.user
+            const {
+                receiver_id,
+                msg
+            } = req.body
+            
+            await sendMessage(sender_id, receiver_id, msg, SEND_MESSAGE_TYPE.ONE_ON_ONE)
 
-            const userExist_inConversation = await Participants.findOne({
-                where : {
-                    [Op.and] : {
-                        user_id : sender_id,
-                        conversation_id : conversation_id,
-                        left_datetime : null
-                    }
-                }
-            })
-
-            if(userExist_inConversation === null) {
-                return res.json({
-                    code : 400,
-                    status : 'Bad Request',
-                    msg : 'The user might not be in this conversation'
-                })
+            const response = {
+                ...SUCCESS_RESPONSE
             }
 
-            const { message_text } = req.body
-
-            const message = await Message.create({
-                sender_id : userExist_inConversation.user_id,
-                conversation_id : userExist_inConversation.conversation_id,
-                message_text : message_text
-            })
-
-            return res.json({
-                code : 200,
-                status : 'OK',
-                newMessage : message
-            })
+            return res.status(response.code).json(response)
         } catch (error) {
             catchInternalError(res, error)
         }
     },
-    getAllMessageByConversationId : async (req,res) => {
-        try { 
-            const { conversation_id } = req.params
+    sendMessageOneOnGroup : async (req, res) => {
+        try {
+            const sender_id = req.user
+            const { group_id } = req.params
+            const {
+                msg
+            } = req.body
 
-            const conversationExist = await Conversation.findByPk(conversation_id)
-            if(conversationExist === null) {
-                return res.json({
-                    code : 400,
-                    status : 'Bad Request',
-                    msg : 'This conversation does not exist'
-                })
+            await sendMessage(sender_id, group_id, msg, SEND_MESSAGE_TYPE.ONE_ON_GROUP)
+
+            const response = {
+                ...SUCCESS_RESPONSE
+            }
+            return res.status(response.code).json(response)
+        } catch (error) {
+            catchInternalError(res,error)
+        }
+    },
+    getAllMessageByGroup : async (req, res) => {
+        try {
+            const { group_id } = req.params
+            const listMessage = await getAllMessages(null, group_id, GET_MESSAGE_TYPE.ONE_ON_GROUP)
+
+            const response = {
+                ...SUCCESS_RESPONSE,
+                data : listMessage
+            }
+            return res.status(response.code).json(response)
+        } catch (error) {
+            catchInternalError(res, error)
+        }
+    },
+    getAllMessageByOneOnOne : async (req, res) => {
+        try {
+            const { account_id } = req.query
+            const self_id = req.user
+            const listMessages = await getAllMessages(self_id, account_id, GET_MESSAGE_TYPE.ONE_ON_ONE)
+
+            console.log(listMessages)
+
+            const response = {
+                ...SUCCESS_RESPONSE,
+                data : listMessages
             }
 
-            const listMessages = await Message.findAll({
-                where : {
-                    conversation_id : conversationExist.id
-                },
-                raw : true
-            })
-
-            return res.json({
-                code : 200,
-                status : 'OK',
-                data : listMessages
-            })
+            return res.status(response.code).json(response)
         } catch (error) {
             catchInternalError(res, error)
         }

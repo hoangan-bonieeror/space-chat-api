@@ -1,19 +1,20 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../utils/db_connection')
 const User = require('./user')
+const Account = require('./account')
 
-const Conversation = sequelize.define('tbl_conversations', {
+const Group = sequelize.define('tbl_groups', {
     id : {
-        type : DataTypes.UUID,
-        defaultValue : DataTypes.UUIDV4,
+        type : DataTypes.INTEGER,
+        autoIncrement : true,
         primaryKey : true,
-        field : 'conversation_id'
+        field : 'group_id'
     },
     creator_id : {
-        type : DataTypes.UUID,
+        type : DataTypes.STRING,
         references : {
-            model : User,
-            key : 'user_id'
+            model : Account,
+            key : 'account_id'
         }
     },
     title : {
@@ -28,6 +29,6 @@ const Conversation = sequelize.define('tbl_conversations', {
     }
 })
 
-// Conversation.sync({force : true})
+// Group.sync({force : true})
 
-module.exports = Conversation
+module.exports = Group

@@ -1,12 +1,12 @@
-const { DataTypes } = require('sequelize')
 const sequelize = require('../utils/db_connection')
-const User = require('./user')
+const {DataTypes} = require('sequelize')
+const Group = require('./group')
 const Account = require('./account')
 
-const Message = sequelize.define('tbl_messages', {
+const GroupMessage = sequelize.define('tbl_group_messages', {
     id : {
         type : DataTypes.INTEGER,
-        autoIncrement: true,
+        autoIncrement : true,
         primaryKey : true,
         field : 'message_id'
     },
@@ -15,22 +15,20 @@ const Message = sequelize.define('tbl_messages', {
         allowNull : false,
         field : 'content'
     },
-    sender_id  : {
+    sender_id : {
         type : DataTypes.STRING,
         references : {
             model : Account,
             key : 'account_id'
         }
     },
-    receiver_id : {
-        type : DataTypes.STRING,
+    group_id : {
+        type : DataTypes.INTEGER,
         references : {
-            model : Account,
-            key : 'account_id'
+            model : Group,
+            key : 'group_id'
         }
     }
 })
-
-// Message.sync({alter : true})
-
-module.exports = Message
+// GroupMessage.sync({force : true})
+module.exports = GroupMessage

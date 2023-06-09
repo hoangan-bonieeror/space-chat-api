@@ -1,67 +1,51 @@
 const bcrypt = require('bcrypt')
 const User = require('../model/user')
 const jwt = require('jsonwebtoken')
+const { SUCCESS_RESPONSE, UNAUTHORIZED_RESPONSE } = require('../utils/response')
+const catchInternalError = require('../utils/catchInternalError')
+const { validationResult } = require('express-validator')
+const { Account } = require('../model')
+const { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE } = require('../const/const')
 
 module.exports = {
     authenticateUser : async (req, res) => {
         try {
+            const resultValidation = validationResult(req)
+            if(resultValidation && resultValidation.errors.length) {
+                throw resultValidation.errors
+            }
             const { username, password } = req.body
 
-            const userExist = await User.findOne({ where : { email : username } })
+            const found = await Account.findOne({ where : { username : username } })
+            const isMatchPassword = bcrypt.compare(password, found.password)
 
-            if(!userExist) {
-                return res.status(401).json({
-                    code : 401,
-                    status : 'Unauthorized',
-                    msg : 'User is not existed'
-                })
-            }
+            if(isMatchPassword) {
+                const accessToken = jwt.sign(
+                    { data : found.id },
+                    process.env.ACCESS_TOKEN_SECRET , { expiresIn: ACCESS_TOKEN_AGE });
 
-            if(bcrypt.compareSync(password, userExist.password)) {
-                const accessToken = jwt.sign({
-                    data : userExist.id
-                }, process.env.ACCESS_TOKEN_SECRET ,{ expiresIn: '15m' });
-
-                const refreshToken = jwt.sign({
-                    data : userExist.id
-                }, process.env.REFRESH_TOKEN_SECRET ,{ expiresIn: '3d' });
-
-                // Save refresh token to database
-                userExist.refreshToken = refreshToken
-                await userExist.save()
+                const refreshToken = jwt.sign(
+                    { data : found.id },
+                    process.env.REFRESH_TOKEN_SECRET , { expiresIn: REFRESH_TOKEN_AGE });
 
                 // Set cookie for refresh token
-                res.cookie('refreshToken', refreshToken, { httpOnly : true, maxAge : 3 * 24 * 60 * 60 * 1000 })
+                res.cookie('refreshToken', refreshToken, { httpOnly : true, maxAge : +REFRESH_TOKEN_AGE*3 })
 
-                let currentTime = Date.now()
-                let expTime = currentTime + (60000 * 60 * 3)
-                return res.status(200).json({
-                    code : 200,
-                    status : 'OK',
-                    data : {
-                        accessToken : accessToken,
-                        exp : new Date(expTime).toLocaleString(),
-                        time : new Date(currentTime).toLocaleString()
-                    }
-                })
+                const response = {
+                    ...SUCCESS_RESPONSE,
+                    accessToken
+                }
+                return res.status(response.code).json(response)
             } else {
-                return res.status(401).json({
-                    code : 401,
-                    status : 'Unauthorized',
-                    msg : 'Wrong password'
-                })
+                const response = {
+                    ...UNAUTHORIZED_RESPONSE,
+                    msg : 'Incorrect password'
+                }
+                return res.status(response.code).json(response)
             }
         } catch (error) {
             console.log(error)
-            return res.status(500).json({
-                code : 500,
-                status : 'Internal System Error',
-                msg : 'Something went wrong'
-            })
+            catchInternalError(res, error)
         }
-    },
-    // handleRefreshToken : (req, res) => {
-
-    // },
-    // handle
+    }
 }

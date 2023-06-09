@@ -1,9 +1,10 @@
 const express = require('express')
 const controller = require('../controller/message.controller')
+const { validateOneOnOneMessage, validateGetAllMessagesByOther } = require('../middlewares/validator')
+const validateHandler = require('../middlewares/validateHandler')
 
 const router = express.Router()
 
-router.post('/from/:sender_id/to/:conversation_id', controller.sendMessageToConversation)
-router.get('/:conversation_id/get-all-messages', controller.getAllMessageByConversationId)
-
+router.post('/', validateOneOnOneMessage(), validateHandler, controller.sendMessageOneOnOne)
+router.get('/', validateGetAllMessagesByOther(), validateHandler, controller.getAllMessageByOneOnOne)
 module.exports = router

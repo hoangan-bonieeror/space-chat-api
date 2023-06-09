@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../utils/db_connection')
+const Account = require('./account')
 
 const User = sequelize.define('tbl_users' , {
     id : {
@@ -36,11 +37,6 @@ const User = sequelize.define('tbl_users' , {
         allowNull : false,
         field : 'email'
     },
-    password : {
-        type : DataTypes.STRING,
-        allowNull : false,
-        field : 'password'
-    },
     profile_photo : {
         type : DataTypes.STRING,
         allowNull : true,
@@ -52,12 +48,12 @@ const User = sequelize.define('tbl_users' , {
         defaultValue : null,
         field : 'profile_bio'
     },
-    refreshToken : {
+    account_id : {
         type : DataTypes.STRING,
-        defaultValue : null,
-        field : 'refresh_token',
-        set(newRefreshToken) {
-            this.setDataValue('refreshToken', newRefreshToken)
+        field : 'account_id',
+        references : {
+            model : Account,
+            key : 'account_id'
         }
     }
 })

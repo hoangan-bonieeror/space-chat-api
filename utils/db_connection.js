@@ -8,12 +8,12 @@ const db = new Sequelize({
     host: process.env.PGHOST,
     port: 5432,
     dialect: "postgres",
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false // <<<<<<< YOU NEED THIS
-            }
-    },
+    // dialectOptions: {
+    //     ssl: {
+    //         require: true,
+    //         rejectUnauthorized: false // <<<<<<< YOU NEED THIS
+    //         }
+    // },
 });
 
 db.authenticate()

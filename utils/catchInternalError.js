@@ -1,8 +1,9 @@
-module.exports = (response,error) => {
-    console.log(error)
-    return response.status(500).json({
-        code : 500,
-        status : 'Internal Error System',
-        msg : 'Something went wrong'
-    })
+const { ERROR_RESPONSE } = require("./response")
+
+module.exports = (res, error) => {
+    const response = {
+        ...ERROR_RESPONSE,
+        error : error
+    }
+    return res.status(response.code).json(response)
 }
