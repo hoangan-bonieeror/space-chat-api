@@ -28,6 +28,10 @@ const { body, check, param, query } = new ExpressValidator({
     isGroupExist : async (groupID) => {
         const found = await Group.findOne({ where : { id : groupID } })
         if(!found) throw new Error('Group is not exist')
+    },
+    isUserExist : async (user_id) => {
+        const found = await User.findOne({ where : { id : user_id } })
+        if(!found) throw new Error('User is not exist')
     }
 })
 
@@ -129,6 +133,25 @@ module.exports = {
         return [
             body('password').isLength({ min : 5 }),
             body('passwordConfirmation').isMatchPassword().withMessage('Confirmation is not match')
+        ]
+    },
+    validateSendRequest : () => {
+        return [
+            body('addressee_id').notEmpty().withMessage('Addressee id is required'),
+            body('addressee_id').isUserExist(),
+            body('addressee_id').isUUID().withMessage('Invalid format')
+        ]
+    },
+    validateAcceptRequest : () => {
+        return [
+            param('addressee_id').notEmpty().withMessage('Addressee id is required'),
+            param('addressee_id').isUserExist() 
+        ]
+    },
+    validateRemoveRequest : () => {
+        return [
+            param('addressee_id').notEmpty().withMessage('Addressee id is required'),
+            param('addressee_id').isUserExist()
         ]
     }
 }

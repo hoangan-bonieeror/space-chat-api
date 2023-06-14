@@ -15,6 +15,7 @@ const {errorHandler, reqHandler} = require('./middlewares/logHandler')
 const userRoute = require('./route/user.route')
 const messageRoute = require('./route/message.route')
 const groupRoute = require('./route/group.route')
+const friendshipRoute = require('./route/friendship.route')
 // #### Constants #####
 const {NON_REQUIRED_AUTHENTICATION} = require('./const/const')
 
@@ -44,6 +45,7 @@ setupUnauthRoute(app, Object.values(NON_REQUIRED_AUTHENTICATION))
 app.use('/user', userRoute)
 app.use('/group', authorization, groupRoute)
 app.use('/message', authorization, messageRoute)
+app.use('/friendship', authorization, friendshipRoute)
 
 app.all('/*', (req, _) => {
     throw Error(`${req.ip} try to load the ${req.url}`)
